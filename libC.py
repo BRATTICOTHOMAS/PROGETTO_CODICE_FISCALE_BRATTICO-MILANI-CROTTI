@@ -243,7 +243,7 @@ def chiedicomune():
          print("<<!>> Errore: Il comune da te scelto non è disponibile!")
 def rimuovi_spazi(stringa):
     try:
-        if len(stringa)>=3:
+        if len(stringa)>=2:
             stringa= stringa.strip()
             return stringa
         else:
