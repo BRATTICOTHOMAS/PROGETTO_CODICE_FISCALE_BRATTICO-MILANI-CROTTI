@@ -244,7 +244,7 @@ def chiedicomune():
 def rimuovi_spazi(stringa):
     try:
         if len(stringa)>=2:
-            stringa= stringa.strip()
+            stringa= stringa.replace(" ","")
             return stringa
         else:
             raise SyntaxError
@@ -302,6 +302,6 @@ def CodiceNome(stringa):
 #date=datetime(1910,4,12)
 #codice=CodiceMese(date)
 #print(codice)
-nome=input("Inserisci nome: ").upper().strip()
-codicen=CodicNome(nome)
-print(codicen)
+#nome=input("Inserisci nome: ").upper().strip()
+#codicen=CodiceNome(nome)
+#print(codicen)
