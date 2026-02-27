@@ -1,5 +1,51 @@
+def chiediCognome():
+ 
+    cognome = input("Inserisci il tuo cognome >> ")
+    cognome=rimuoviLettereAccentate(cognome)
+    cognome=rimuoviSpazi(cognome)
+    return cognome
+ 
+def chiediDataNascita():
+ 
+    from datetime import datetime
+    errore=True
+    while errore:
+            data = input("Inserisci la tua data di nascita (gg/mm/aaaa): ")
+           
+            try:
+               
+                data_nascita = datetime.strptime(data, "%d/%m/%Y")
+                if data_nascita > datetime.now():
+                    print("Data non valida, riprovare")
+                else:
+                    errore=False                
+                    return data_nascita
+           
+            except:
+                print("Data non valida, riprovare")
+ 
+def calcolaCodiceComune(comune,lista_comuni):
+    codice=lista_comuni[comune]
+    return codice
+ 
+def calcolaCodiceAnno(data):
+    anno = data.year #estrae l'anno dall'oggetto in formato datetime
+    codice= str(anno)[-2:]
+    return codice
+ 
+def calcolaCodiceCognome(cognome):
+    consonanti = []
+    for lettere in cognome:
+        if lettere not in "aeiou" and len(consonanti) < 3:
+            consonanti.append(lettere)
+    if len(consonanti) < 3:
+        for lettere in cognome:
+            if lettere in "aeiou" and len(consonanti) < 3:
+                consonanti.append(lettere)
 
-
+    codice=consonanti[0] + consonanti[1] + consonanti[2]
+    return codice
+    
 
 
 
