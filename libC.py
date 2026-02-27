@@ -4,25 +4,6 @@ def rimuovilettereaccentate(stringa):
     for accentata,nonaccentata in sost:
         stringa=stringa.replace(accentata,nonaccentata)
     return stringa
-def chiedicomune():
-    comuni=["Lignano Sabbiadoro","Salerno","Palermo","Agropoli",
-            "Lecce","Pontedera","Bergamo","Boltiere","Almenno San Bartolomeo",
-            "Milano","San Giorgio a Cremano"]
-    
-    
-    i = 1
-    for comune in comuni:
-        print( " - " + str(comune))
-        i = i + 1
-    try:
-        scelta_comune = input("Quale comune vuoi scegliere? (nome comune): ").strip().capitalize()
-        
-        if scelta_comune not in comuni:
-                raise SyntaxError
-        else:
-            return scelta_comune
-    except: 
-         print("<<!>> Errore: Il comune da te scelto non è disponibile!")
 def rimuovi_spazi(stringa):
     try:
         if len(stringa)>=2:
@@ -31,12 +12,45 @@ def rimuovi_spazi(stringa):
         else:
             raise SyntaxError
     except:
-        print("<<!>> Errore: la stringa inserita è minore di 3 lettere!")
+        print("<<!>> Errore: la stringa inserita è minore di 2 lettere!")
+def caricaComuni():
+    import requests
+    try:
+        response = requests.get("https://comuni-ita.nicolorebaioli.dev/comuni?limit=10000") #ho dovuto mettere il limite a 10000 perche con questa api di default mi dava solo i primi 100 comuni e non tutti
+        if response.status_code == 200:
+            dati = response.json()
+            dizionario = {}
+            for comune in dati:
+                nome = comune["nome"].lower()
+                codice = comune["codiceCatastale"]
+                dizionario[nome] = codice
+            return dizionario
+        else:
+            raise ImportError
+    except:
+        print("<<!>> Errore di connessione all'API.")
+        return {}
+def chiedicomune(lista_comuni):
+    corretto = False
+    while not corretto:
+        try:
+            nome = input("Inserisci il nome del comune di nascita: ").strip().lower()
+            if nome not in lista_comuni:
+                raise ValueError
+            else:
+                corretto = True
+                return nome
+        except:
+            print("<<!>> Comune non trovato. Riprova.")
+def calcolaCodiceComune(comune,lista_comuni):
+    try:
+        codice=lista_comuni[comune]
+        return codice
+    except:print("QUESTO COMUNE NON è PRESENTE")
 def chiediSesso():
     corretto=False
     while not corretto:
         sesso=input("inserisci il sesso m/f ")
-        
         if sesso.upper()=="M" or sesso.upper()=="F":
             corretto=True
             return sesso.upper()
@@ -50,12 +64,80 @@ def chiedinome():
             nome_ins=rimuovilettereaccentate(nome_ins)
             if nome_ins.isalpha()==True:
                 corretto=True
-        
                 return nome_ins
             else:print("puoi inserire solo lettere")
-        
                 #print("ciao")
-        except:print("ERRORE NEL FORMATO")     
+        except:print("ERRORE NEL FORMATO DEL NOME")     
+def CodiceNome(stringa):
+    cons = ['B','C','D','F','G','H','J','K','L','M','N','P','Q','R','S','T','V','W','X','Y','Z']
+    vocali = ['A','E','I','O','U']
+    stringa = stringa.upper()
+    consonanti_trovate = []
+    for c in stringa:
+        if c in cons:
+            consonanti_trovate.append(c)
+    vocali_trovate = []
+    for c in stringa:
+        if c in vocali:
+            vocali_trovate.append(c)
+    if len(stringa) < 3:
+        codice = consonanti_trovate + vocali_trovate
+        while len(codice) < 3:
+            codice.append('X')
+    else:
+        if len(consonanti_trovate) >= 4:
+            codice = [consonanti_trovate[0], consonanti_trovate[2], consonanti_trovate[3]]
+        elif len(consonanti_trovate) == 3:
+            codice = consonanti_trovate[:3]
+        else:
+            codice = consonanti_trovate[:]
+            vocali_necessarie = vocali_trovate[:3 - len(codice)]
+            codice = codice + vocali_necessarie
+            while len(codice) < 3:
+                codice.append('X')
+    risultato = ''
+    for c in codice[:3]:
+        risultato += c
+    return risultato
+def chiediCognome():
+    corretto=False
+    while not corretto:
+        try:
+            cognome = input("Inserisci il tuo cognome (almeno 2 lettere) >> ")
+            if len(cognome)<2 or cognome.isalpha()==False:
+                raise ValueError        
+            else:
+                cognome=rimuovilettereaccentate(cognome)
+                cognome=rimuovi_spazi(cognome)
+                return cognome
+        except:print("ERRORE FORMATO NEL CHIEDI COGNOME")
+def calcolaCodiceCognome(cognome):
+    cognome=cognome.upper()
+    consonanti = []
+    for lettere in cognome:
+        if lettere not in "AEIOU" and len(consonanti) < 3:
+            consonanti.append(lettere)
+    if len(consonanti) < 3:
+        for lettere in cognome:
+            if lettere in "AEIOU" and len(consonanti) < 3:
+                consonanti.append(lettere)
+def chiediDataNascita():
+    from datetime import datetime
+    errore=True
+    while errore:
+            data = input("Inserisci la tua data di nascita (gg/mm/aaaa): ")
+           
+            try:
+               
+                data_nascita = datetime.strptime(data, "%d/%m/%Y")
+                if data_nascita > datetime.now():
+                    print("Data non valida, riprovare")
+                else:
+                    errore=False                
+                    return data_nascita
+           
+            except:
+                print("Data di nascita non valida, riprovare")
 def calcolaCodiceGiorno(date,sesso):
     import datetime
     g=date.day
@@ -76,111 +158,15 @@ def calcolaCodiceGiorno(date,sesso):
         g=str(g)
         #print(g)
         return g
-    
-
-
-def chiediDataNascita():
- 
-    from datetime import datetime
-    errore=True
-    while errore:
-            data = input("Inserisci la tua data di nascita (gg/mm/aaaa): ")
-           
-            try:
-               
-                data_nascita = datetime.strptime(data, "%d/%m/%Y")
-                if data_nascita > datetime.now():
-                    print("Data non valida, riprovare")
-                else:
-                    errore=False                
-                    return data_nascita
-           
-            except:
-                print("Data non valida, riprovare")
- 
-def calcolaCodiceComune(comune,lista_comuni):
-    try:
-        codice=lista_comuni[comune]
-        return codice
-    except:print("QUESTO COMUNE NON è PRESENTE")
- 
-def calcolaCodiceAnno(data):
-    anno = data.year #estrae l'anno dall'oggetto in formato datetime
-    codice= str(anno)[-2:]
-    return codice
- 
-def calcolaCodiceCognome(cognome):
-    cognome=cognome.upper()
-    consonanti = []
-    for lettere in cognome:
-        if lettere not in "AEIOU" and len(consonanti) < 3:
-            consonanti.append(lettere)
-    if len(consonanti) < 3:
-        for lettere in cognome:
-            if lettere in "AEIOU" and len(consonanti) < 3:
-                consonanti.append(lettere)
-
-    codice=consonanti[0] + consonanti[1] + consonanti[2]
-    return codice
 def CodiceMese(datetime):# in entrata la data di nascita
     meseint=datetime.month #restituisce un valore intero per il mese
     mesi={1: "A",2: "B", 3: "C", 4: "D", 5: "E", 6: "H", 7: "L", 8: "M", 9: "P", 10: "R",11: "S", 12: "T"}
     codice=mesi[meseint]
     return codice
-def CodiceNome(stringa):
-    cons = ['B','C','D','F','G','H','J','K','L','M','N','P','Q','R','S','T','V','W','X','Y','Z']
-    vocali = ['A','E','I','O','U']
-    
-    stringa = stringa.upper()
-    
-    consonanti_trovate = []
-    for c in stringa:
-        if c in cons:
-            consonanti_trovate.append(c)
-    
-    vocali_trovate = []
-    for c in stringa:
-        if c in vocali:
-            vocali_trovate.append(c)
-    
-    if len(stringa) < 3:
-        codice = consonanti_trovate + vocali_trovate
-        while len(codice) < 3:
-            codice.append('X')
-    else:
-        if len(consonanti_trovate) >= 4:
-            codice = [consonanti_trovate[0], consonanti_trovate[2], consonanti_trovate[3]]
-        elif len(consonanti_trovate) == 3:
-            codice = consonanti_trovate[:3]
-        else:
-            codice = consonanti_trovate[:]
-            vocali_necessarie = vocali_trovate[:3 - len(codice)]
-            codice = codice + vocali_necessarie
-            while len(codice) < 3:
-                codice.append('X')
-    
-    risultato = ''
-    for c in codice[:3]:
-        risultato += c
-    
-    return risultato
-def chiediCognome():
-    corretto=False
-    while not corretto:
-        try:
-            cognome = input("Inserisci il tuo cognome (almeno 3 lettere) >> ")
-            if len(cognome)<3 or cognome.isalpha()==False:
-                raise ValueError
-                
-            else:
-                cognome=rimuovilettereaccentate(cognome)
-                cognome=rimuovi_spazi(cognome)
-                return cognome
-        except:print("ERRORE FORMATO")
-            
-            
-
-
+def calcolaCodiceAnno(data):
+    anno = data.year #estrae l'anno dall'oggetto in formato datetime
+    codice= str(anno)[-2:]
+    return codice        
 def calcolaprecontrollocod(cognome, nome, data, sesso, comune,lista_comuni):
     try:
         cod_cognome=calcolaCodiceCognome(cognome.upper())
@@ -190,9 +176,7 @@ def calcolaprecontrollocod(cognome, nome, data, sesso, comune,lista_comuni):
         cod_giorno=calcolaCodiceGiorno(data, sesso)
         cod_comune=calcolaCodiceComune(comune,lista_comuni)
         return (cod_cognome+cod_nome+cod_anno+cod_mese+cod_giorno+cod_comune).upper()
-    except:print("ERRORE NEL CALCOLO DEL CODICE FISCALE")
-
-
+    except:print("ERRORE NEL CALCOLO DEL CODICE FISCALE INCOMPLETO")
 def calcolaCodiceControllo(codice_quasi):
     try:
         codice_quasi=calcolaprecontrollocod(cognome,nome,data,sesso,comune,lista_comuni)
@@ -207,24 +191,22 @@ def calcolaCodiceControllo(codice_quasi):
                 somma+=diz_pari[codice_quasi[i].lower()]
         resto=somma%26
         return resto_sin[resto]
-    except:print("ERRORE NEL CALCOLO DEL CODICE FISCALE TOTALE")
-
-
-    #PROGRAMMA PRINCIPALE----------------------------------------
-corretto=False
+    except:print("ERRORE NEL CALCOLO DEL CODICE FISCALE ")
+#PROGRAMMA PRINCIPALE----------------------------------------
+lista_comuni = caricaComuni()
+print(F"NUMERO DI COMUNI TROVATI: {len(lista_comuni)}")
+corretto = False
 while not corretto:
     try:
-
-        cognome =chiediCognome()
-        nome=chiedinome()
-        data=chiediDataNascita()
-        sesso=chiediSesso()
-        comune=chiedicomune()
-        lista_comuni={"Lignano Sabbiadoro": "G941","Salerno": "H703","Palermo":"G273","Agropoli":"A091","Lecce": "E506","Pontedera": "G843","Bergamo": "A794","Boltiere": "A950","Almenno San Bartolomeo" :"A216","Milano"  : "F205","San Giorgio a Cremano"  : "H894"}
+        cognome = chiediCognome()
+        nome = chiedinome()
+        data = chiediDataNascita()
+        sesso = chiediSesso()
+        comune = chiedicomune(lista_comuni) 
         codice_quasi=calcolaprecontrollocod(cognome, nome, data, sesso, comune,lista_comuni)
         carat_controllo=calcolaCodiceControllo(codice_quasi)   
         codice_finale=codice_quasi+carat_controllo
         print(f" ecco il codice fiscale: {codice_finale}")
         if len(codice_finale)==16:
             corretto=True
-    except:print("ERRORE CODICE FISCALE")
+    except:print("ERRORE FUNZIONI")
