@@ -1,100 +1,83 @@
+def rimuovilettereaccentate(stringa):
+    sost=[('à', 'a'), ('è', 'e'), ('é', 'e'), ('ì', 'i'), ('ò', 'o'), ('ù', 'u'),
+        ('À', 'A'), ('È', 'E'), ('É', 'E'), ('Ì', 'I'), ('Ò', 'O'), ('Ù', 'U')]
+    for accentata,nonaccentata in sost:
+        stringa=stringa.replace(accentata,nonaccentata)
+    return stringa
+def chiedicomune():
+    comuni=["Lignano Sabbiadoro","Salerno","Palermo","Agropoli",
+            "Lecce","Pontedera","Stezzano","Boltiere","Almenno San Bartolomeo",
+            "Fara Olivana con Sola","San Giorgio a Cremano"]
+    i = 1
+    for comune in comuni:
+        print( " - " + str(comune))
+        i = i + 1
+    try:
+        scelta_comune = input("Quale comune vuoi scegliere? (nome comune): ").strip().capitalize()
+        
+        if scelta_comune not in comuni:
+                raise SyntaxError
+        else:
+            return scelta_comune
+    except: 
+         print("<<!>> Errore: Il comune da te scelto non è disponibile!")
+def rimuovi_spazi(stringa):
+    try:
+        if len(stringa)>=2:
+            stringa= stringa.replace(" ","")
+            return stringa
+        else:
+            raise SyntaxError
+    except:
+        print("<<!>> Errore: la stringa inserita è minore di 3 lettere!")
+def chiediSesso():
+    corretto=False
+    while not corretto:
+        sesso=input("inserisci il sesso m/f")
+        
+        if sesso.upper()=="M":
+            return "M"
+            
+        elif sesso.upper()=="F":
+            return"F"
+        else:print("inserimento del sesso errato")
+def chiedinome():
+    corretto=False
+    while not corretto:
+        try:
+            nome_ins=input("inserisci il nome (no numeri e min 2 lettere)")
+            nome_ins=rimuovi_spazi(nome_ins)
+            nome_ins=rimuovilettereaccentate(nome_ins)
+            if nome_ins.isalpha()==True:
+                corretto=True
+        
+                return nome_ins
+            else:print("puoi inserire solo lettere")
+        
+                #print("ciao")
+        except:print("ERRORE NEL FORMATO")     
+def calcolaCodiceGiorno(date,sesso):
+    g=date.day
+    if sesso=="M":
+        if g<10:
+           # print("ciao")
+           g=str(g)
+           giorno_codice="0"+g
+           return giorno_codice
+           #print(giorno_codice)
+        else:
+            g=str(g)
+            #print(g)
+            return g
+           
+    elif sesso=="F":
+        g+=40
+        g=str(g)
+        #print(g)
+        return g
+    
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def chiediCognome():
- 
-    cognome = input("Inserisci il tuo cognome >> ")
-    cognome=rimuoviLettereAccentate(cognome)
-    cognome=rimuoviSpazi(cognome)
-    return cognome
- 
 def chiediDataNascita():
  
     from datetime import datetime
@@ -135,257 +118,6 @@ def calcolaCodiceCognome(cognome):
 
     codice=consonanti[0] + consonanti[1] + consonanti[2]
     return codice
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-from datetime import datetime 
-def rimuovilettereaccentate(stringa):
-    sost=[('à', 'a'), ('è', 'e'), ('é', 'e'), ('ì', 'i'), ('ò', 'o'), ('ù', 'u'),
-        ('À', 'A'), ('È', 'E'), ('É', 'E'), ('Ì', 'I'), ('Ò', 'O'), ('Ù', 'U')]
-    for accentata,nonaccentata in sost:
-        stringa=stringa.replace(accentata,nonaccentata)
-    return stringa
-def chiedicomune():
-    comuni=["Lignano Sabbiadoro","Salerno","Palermo","Agropoli",
-            "Lecce","Pontedera","Stezzano","Boltiere","Almenno San Bartolomeo",
-            "Fara Olivana con Sola","San Giorgio a Cremano"]
-    i = 1
-    for comune in comuni:
-        print( " - " + str(comune))
-        i = i + 1
-    try:
-        scelta_comune = input("Quale comune vuoi scegliere? (nome comune): ").strip().capitalize()
-        
-        if scelta_comune not in comuni:
-                raise SyntaxError
-        else:
-            return scelta_comune
-    except: 
-         print("<<!>> Errore: Il comune da te scelto non è disponibile!")
-def rimuovi_spazi(stringa):
-    try:
-        if len(stringa)>=2:
-            stringa= stringa.replace(" ","")
-            return stringa
-        else:
-            raise SyntaxError
-    except:
-        print("<<!>> Errore: la stringa inserita è minore di 3 lettere!")
 def CodiceMese(datetime):# in entrata la data di nascita
     meseint=datetime.month #restituisce un valore intero per il mese
     mesi={1: "A",2: "B", 3: "C", 4: "D", 5: "E", 6: "H", 7: "L", 8: "M", 9: "P", 10: "R",11: "S", 12: "T"}
@@ -428,7 +160,20 @@ def CodiceNome(stringa):
         risultato += c
     
     return risultato
+def chiediCognome():
+ 
+    cognome = input("Inserisci il tuo cognome >> ")
+    cognome=rimuovilettereaccentate(cognome)
+    cognome=rimuovi_spazi(cognome)
+    return cognome
             
+
+
+sesso=chiediSesso()
+date=chiediDataNascita
+codice_g=calcolaCodiceGiorno(date,sesso)
+print(codice_g)
+
 #print("COMUNI")
 #comune=chiedicomune()
 #print(comune)
