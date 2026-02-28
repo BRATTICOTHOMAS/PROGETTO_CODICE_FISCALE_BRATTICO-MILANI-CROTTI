@@ -121,6 +121,9 @@ def calcolaCodiceCognome(cognome):
         for lettere in cognome:
             if lettere in "AEIOU" and len(consonanti) < 3:
                 consonanti.append(lettere)
+    codice=consonanti[0] + consonanti[1] + consonanti[2]
+    return codice
+      
 def chiediDataNascita():
     from datetime import datetime
     errore=True
@@ -179,7 +182,7 @@ def calcolaprecontrollocod(cognome, nome, data, sesso, comune,lista_comuni):
     except:print("ERRORE NEL CALCOLO DEL CODICE FISCALE INCOMPLETO")
 def calcolaCodiceControllo(codice_quasi):
     try:
-        codice_quasi=calcolaprecontrollocod(cognome,nome,data,sesso,comune,lista_comuni)
+        
         diz_dispari={"0": 1, "1": 0, "2": 5, "3": 7, "4": 9, "5": 13, "6": 15, "7": 17, "8": 19, "9": 21, "a": 1, "b": 0, "c": 5, "d": 7, "e": 9, "f": 13, "g": 15, "h": 17, "i": 19, "j": 21, "k": 2, "l": 4, "m": 18, "n": 20, "o": 11, "p": 3, "q": 6, "r": 8, "s": 12, "t": 14, "u": 16, "v": 10, "w": 22, "x": 25, "y": 24, "z": 23}
         diz_pari={"0": 0, "1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7, "i": 8, "j": 9, "k": 10, "l": 11, "m": 12, "n": 13, "o": 14, "p": 15, "q": 16, "r": 17, "s": 18, "t": 19, "u": 20, "v": 21, "w": 22, "x": 23, "y": 24, "z": 25}
         resto_sin={0:"A", 1: "B", 2: "C", 3: "D",4: "E", 5: "F", 6: "G", 7: "H", 8: "I", 9: "J", 10: "K", 11: "L", 12:"M", 13: "N", 14: "O", 15: "P", 16:"Q",17: "R", 18: "S", 19:"T", 20:"U", 21: "V", 22: "W", 23: "X", 24: "Y",25:"Z"}
